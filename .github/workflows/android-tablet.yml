@@ -61,6 +61,7 @@ jobs:
 
       - name: Tests (reported, not blocking yet)
         continue-on-error: true
+        timeout-minutes: 10
         run: flutter test | tee test.log
 
       - name: Build the tablet APK
