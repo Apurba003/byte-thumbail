@@ -22,7 +22,9 @@ android {
     // "byte" is a Java keyword, so the code package is byteapp; the installed
     // application id stays com.apurbalaskar.byte.
     namespace = "com.apurbalaskar.byteapp"
-    compileSdk = 37 // a plugin (permission_handler) needs 37; targetSdk stays Flutter's
+    // Use the SDK selected by Flutter so CI and local Android installations
+    // do not depend on a platform package that may not be published yet.
+    compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
