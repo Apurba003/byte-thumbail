@@ -39,20 +39,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // One APK per CPU type: only that type's native libraries go in, so a
-        // phone never picks a folder that has no Flutter engine in it.
-        (project.findProperty("target-platform") as String?)?.let { tp ->
-            val abis = tp.split(",").mapNotNull {
-                when (it.trim()) {
-                    "android-arm" -> "armeabi-v7a"
-                    "android-arm64" -> "arm64-v8a"
-                    "android-x64" -> "x86_64"
-                    "android-x86" -> "x86"
-                    else -> null
-                }
-            }
-            if (abis.isNotEmpty()) ndk { abiFilters.clear(); abiFilters.addAll(abis) }
-        }
     }
 
     // Release key (alias "apex", CN=Apurba Laskar). Every update must be signed
