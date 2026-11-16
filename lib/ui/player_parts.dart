@@ -1148,7 +1148,6 @@ Future<void> showPlayerMore(BuildContext context, Item it) {
   return showByteSheet<void>(
     context: context,
     isScrollControlled: true,
-    backgroundColor: const Color(0xFF1C1C1E), // white text: dark glass from wherever it is opened
     builder: (c) {
       Widget row(IconData i, String t, VoidCallback onTap, {String? sub}) => ListTile(
         leading: Icon(i, color: Colors.white),

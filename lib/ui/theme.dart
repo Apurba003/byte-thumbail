@@ -102,9 +102,9 @@ class ByteTheme {
       ),
       // ⋯ menus: frosted-looking glass with a bright edge
       popupMenuTheme: PopupMenuThemeData(
-        color: b == Brightness.dark ? const Color(0xEB2A2A2E) : const Color(0xF2FFFFFF),
+        color: b == Brightness.dark ? const Color(0xB82A2A2E) : const Color(0xB8FFFFFF),
         surfaceTintColor: Colors.transparent,
-        elevation: 10,
+        elevation: 4,
         shadowColor: Colors.black.withValues(alpha: 0.3),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18),
