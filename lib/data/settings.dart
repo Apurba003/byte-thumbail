@@ -71,8 +71,9 @@ class Settings extends ChangeNotifier {
   bool get automixSmart => _get('automixSmart', true);
   set automixSmart(bool v) => _set('automixSmart', v);
 
-  /// Length of an Automix blend, 4–16 s.
-  double get automixSeconds => _get<double>('automixSec', 8.0);
+  /// Length of an Automix blend, 4–16 s. Six seconds keeps the hand-off smooth
+  /// without making the ending feel rushed.
+  double get automixSeconds => _get<double>('automixSec', 6.0);
   set automixSeconds(double v) => _set('automixSec', v.clamp(4.0, 16.0));
 
   /// With shuffle on, play the songs in the order that blends best.

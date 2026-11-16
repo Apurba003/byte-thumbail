@@ -117,10 +117,11 @@ void main() {
     await until(() => clock.pending != null, why: 'first song ends, gap starts');
   }
 
-  test('defaults: the gap is 2.5 s; crossfade 0; Automix stays on (it no longer overlaps); gapless albums off', () {
+  test('defaults: Automix is on with a 6 s hand-off; gap is 2.5 s; gapless albums off', () {
     expect(p.autoAdvanceGap, const Duration(milliseconds: 2500));
     expect(sv.settings.crossfadeSeconds, 0);
     expect(Settings().automix, isTrue, reason: 'Automix keeps its default (Apurba: "automix karna")');
+    expect(Settings().automixSeconds, 6);
     expect(sv.lab.gapless, isFalse, reason: '"Keep gapless albums intact" only when turned on by hand');
   });
 
