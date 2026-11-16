@@ -81,7 +81,12 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
     _idleTimer?.cancel();
     if (LyricsPane.idle.value) LyricsPane.idle.value = false;
     if (!_lyricsOnScreen || !Services.i.settings.lyricsAutoFullScreen) return;
-    _idleTimer = Timer(LyricsPane.idleAfter, () {
+    // Wide lyrics are intended to become the presentation view quickly on
+    // tablets and computers, while phones keep the existing longer delay.
+    final delay = _wideNow && LyricsPane.idleAfter > const Duration(seconds: 3)
+        ? const Duration(milliseconds: 2500)
+        : LyricsPane.idleAfter;
+    _idleTimer = Timer(delay, () {
       if (!mounted || !_lyricsOnScreen || LyricsPane.selection.value != null) return;
       LyricsPane.idle.value = true;
     });
@@ -459,6 +464,7 @@ class _NowPlayingScreenState extends State<NowPlayingScreen> {
                                       onChanged: (t) {
                                         setState(() => sideTab = t);
                                         _poke();
+                                        _syncFullscreen();
                                       },
                                     ),
                                   ),
