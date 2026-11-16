@@ -193,8 +193,8 @@ class LiquidGlass extends StatelessWidget {
 
   static Color baseTint({required bool dark, required bool strong, required int level}) {
     if (level == 0) return dark ? const Color(0xFF242428) : const Color(0xFFF7F7F9);
-    if (dark) return Color.fromRGBO(30, 30, 34, strong ? 0.74 : 0.42);
-    return Color.fromRGBO(255, 255, 255, strong ? 0.80 : 0.55);
+    if (dark) return Color.fromRGBO(30, 30, 34, strong ? 0.56 : 0.30);
+    return Color.fromRGBO(255, 255, 255, strong ? 0.66 : 0.42);
   }
 
   @override
@@ -305,7 +305,7 @@ Future<T?> showByteSheet<T>({
     shape: const RoundedRectangleBorder(borderRadius: r),
     // a sheet asked for in a dark colour (the player's menus, white text) is dark glass in any theme
     builder: (c) => GlassSheetFrame(
-      tint: backgroundColor?.withValues(alpha: 0.35),
+      tint: backgroundColor?.withValues(alpha: 0.12),
       dark: backgroundColor == null ? null : backgroundColor.computeLuminance() < 0.2,
       handle: showDragHandle,
       child: builder(c),

@@ -22,7 +22,9 @@ android {
     // "byte" is a Java keyword, so the code package is byteapp; the installed
     // application id stays com.apurbalaskar.byte.
     namespace = "com.apurbalaskar.byteapp"
-    compileSdk = 37 // a plugin (permission_handler) needs 37; targetSdk stays Flutter's
+    // Use the SDK selected by Flutter so CI and local Android installations
+    // do not depend on a platform package that may not be published yet.
+    compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -37,20 +39,6 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
-        // One APK per CPU type: only that type's native libraries go in, so a
-        // phone never picks a folder that has no Flutter engine in it.
-        (project.findProperty("target-platform") as String?)?.let { tp ->
-            val abis = tp.split(",").mapNotNull {
-                when (it.trim()) {
-                    "android-arm" -> "armeabi-v7a"
-                    "android-arm64" -> "arm64-v8a"
-                    "android-x64" -> "x86_64"
-                    "android-x86" -> "x86"
-                    else -> null
-                }
-            }
-            if (abis.isNotEmpty()) ndk { abiFilters.clear(); abiFilters.addAll(abis) }
-        }
     }
 
     // Release key (alias "apex", CN=Apurba Laskar). Every update must be signed
