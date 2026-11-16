@@ -1,0 +1,86 @@
+# Byte for Android tablets: builds the APK in GitHub's cloud (no local SDK needed).
+# The tablet layout turns on by itself on wide screens (width >= 820 dp, and the
+# full-screen lyrics poster when the short side is >= 600 dp). Phones keep the
+# phone layout. Runs on every push to main, or by hand from the Actions tab.
+#
+# Optional secrets (Settings > Secrets and variables > Actions):
+#   BYTE_KEYSTORE_B64   the release keystore (.jks), base64 encoded
+#   BYTE_STORE_PASSWORD, BYTE_KEY_PASSWORD, BYTE_KEY_ALIAS (default: apex)
+# Without them the APK is signed with the debug key: it installs and runs,
+# but cannot update the app you published with the release key.
+name: Android tablet build
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Android platform and build tools
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-37" "build-tools;37.0.0"
+
+      - name: Flutter and packages
+        run: |
+          flutter --version
+          flutter pub get
+
+      - name: Analyze (errors stop the build)
+        run: flutter analyze | tee analyze.log
+
+      - name: Release signing from secrets (optional)
+        env:
+          KEYSTORE_B64: ${{ secrets.BYTE_KEYSTORE_B64 }}
+          STORE_PASSWORD: ${{ secrets.BYTE_STORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.BYTE_KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.BYTE_KEY_ALIAS }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.jks"
+            printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+              "$RUNNER_TEMP/release.jks" "$STORE_PASSWORD" "${KEY_ALIAS:-apex}" "$KEY_PASSWORD" > android/key.properties
+            echo "Signing with the release key."
+          else
+            echo "No release key secrets: the APK is signed with the debug key."
+          fi
+
+      - name: Tests (reported, not blocking yet)
+        continue-on-error: true
+        run: flutter test | tee test.log
+
+      - name: Build the tablet APK
+        run: |
+          flutter build apk --release --split-per-abi \
+            --target-platform android-arm,android-arm64 \
+            --obfuscate --split-debug-info=build/symbols
+
+      - name: Upload the APK and the logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: byte-android-tablet
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            analyze.log
+            test.log
+          if-no-files-found: error
+          retention-days: 30
