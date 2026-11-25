@@ -367,8 +367,14 @@ void main() {
       final f = find.text(other);
       if (f.evaluate().isNotEmpty) expect(tester.getTopLeft(f.first).dy, greaterThan(pls), reason: other);
     }
-    // tap Liked songs: plays them and opens the list
+    // Opening Liked songs must not start playback; the explicit Play button does.
     await tester.tap(find.byKey(const ValueKey('home-liked')));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(sv.player.current.value, isNull);
+    expect(find.text('Liked Songs'), findsWidgets);
+    Navigator.of(tester.element(find.byType(HomeScreen))).pop();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byKey(const ValueKey('home-liked-play')));
     await tester.pump(const Duration(milliseconds: 600));
     expect(sv.player.current.value?.id, isNotNull);
     expect(['l1', 'l2', 'l3'], contains(sv.player.current.value!.id));

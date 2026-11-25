@@ -97,7 +97,7 @@ class HomeLibraryRows extends StatelessWidget {
   }
 }
 
-/// "Liked songs · N songs": tap plays them and opens the full list; ▶ only plays.
+/// "Liked songs · N songs": tap opens the full list; ▶ starts playback.
 class _LikedCard extends StatelessWidget {
   final List<Item> likes;
   const _LikedCard({required this.likes});
@@ -118,10 +118,7 @@ class _LikedCard extends StatelessWidget {
             label: 'Liked songs, ${songCount(likes.length)}',
             child: Pressable(
               key: const ValueKey('home-liked'),
-              onTap: () {
-                play();
-                pushPage(context, const LikedScreen());
-              },
+              onTap: () => pushPage(context, const LikedScreen()),
               child: Container(
                 height: 76,
                 padding: const EdgeInsets.all(10),
