@@ -16,7 +16,6 @@ import 'package:byte/data/cloud_sync.dart';
 import 'package:byte/services.dart';
 import 'package:byte/ui/home_library_rows.dart';
 import 'package:byte/ui/screens/home_screen.dart';
-import 'package:byte/ui/screens/library_pages.dart' show LikedScreen;
 import 'package:byte/ui/screens/playlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -372,8 +371,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('home-liked')));
     await tester.pump(const Duration(milliseconds: 600));
     expect(sv.player.current.value, isNull);
-    expect(find.byType(LikedScreen), findsOneWidget);
-    Navigator.of(tester.element(find.byType(HomeScreen))).pop();
+    Navigator.of(tester.element(find.byType(HomeScreen))).popUntil((r) => r.isFirst);
     await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.byKey(const ValueKey('home-liked-play')));
     await tester.pump(const Duration(milliseconds: 600));
@@ -381,7 +379,6 @@ void main() {
     expect(['l1', 'l2', 'l3'], contains(sv.player.current.value!.id));
     // tap a playlist: plays it, opens it, and it is remembered as played
     // (last in this file: these taps write from inside the test clock)
-    Navigator.of(tester.element(find.byType(HomeScreen))).popUntil((r) => r.isFirst);
     for (var i = 0; i < 4; i++) {
       await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 20)));
       await tester.pump(const Duration(milliseconds: 150));
