@@ -16,6 +16,7 @@ import 'package:byte/data/cloud_sync.dart';
 import 'package:byte/services.dart';
 import 'package:byte/ui/home_library_rows.dart';
 import 'package:byte/ui/screens/home_screen.dart';
+import 'package:byte/ui/screens/library_pages.dart' show LikedScreen;
 import 'package:byte/ui/screens/playlist_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -371,7 +372,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('home-liked')));
     await tester.pump(const Duration(milliseconds: 600));
     expect(sv.player.current.value, isNull);
-    expect(find.text('Liked Songs'), findsWidgets);
+    expect(find.byType(LikedScreen), findsOneWidget);
     Navigator.of(tester.element(find.byType(HomeScreen))).pop();
     await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.byKey(const ValueKey('home-liked-play')));
